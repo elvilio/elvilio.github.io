@@ -12,9 +12,10 @@ $buffer.height = $canvas.height;
 
 const realCanvas = $canvas.getContext('2d');
 const realBuffer = $buffer.getContext('2d');
+beginAnimationLoop();
 
 function beginAnimationLoop() {
-	var anim = new animation(realCanvas, realBuffer);
+	var anim = animation(realCanvas, realBuffer);
   setInterval(() => {
         anim.next();
     }, 1000 / 60);
@@ -101,21 +102,21 @@ function* animation(g, bg) {
     const p1 = addVec(pos, dwn);
     const path = createTurbulentLine(p0, p1);
     const leftClip = new Path2D(path);
-    const templ0 = addVec(pos, addVec(up, left));
+    const templ0 = addVec(pos, addVec(up_, lft));
     const [xl0, yl0] = [templ0.x,templ0.y];
-    const templ1 = addVec(pos, addVec(down, left));
+    const templ1 = addVec(pos, addVec(dwn, lft));
     const [xl1, yl1] = [templ1.x,templ1.y];
     
     
     leftClip.lineTo(xl1, yl1);
-		leftClip.lineTo(xl0, yl0);
-		leftClip.closePath();
+	leftClip.lineTo(xl0, yl0);
+	leftClip.closePath();
     
     
     const rightClip = new Path2D(path);
-    const tempr0 = addVec(pos, addVec(up, right));
+    const tempr0 = addVec(pos, addVec(up_, rgt));
     const [xr0, yr0] = [tempr0.x,tempr0.y];
-    const tempr1 = addVec(pos, addVec(down, right))
+    const tempr1 = addVec(pos, addVec(dwn, rgt))
     const [xr1, yr1] = [tempr1.x,tempr1.y];
     
     rightClip.lineTo(xr1, yr1);
@@ -144,11 +145,3 @@ function* animation(g, bg) {
     yield;
 	}
 }
-
-
-
-
-
-
-
-
