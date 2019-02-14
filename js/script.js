@@ -43,16 +43,16 @@ function multiplyVec(t, p) {
 	return {x: t*p.x,y: t*p.y};
 }
 
-function normalizeVec (v) {
+function normalizeVec(v) {
 	const norm = Math.hypot(v.x,v.y);
   return {x: v.x/norm, y: v.y/norm};
 }
 
 function noiseFunct(x) {
 	function baseNP(x) {
-  	return (Math.sin(x + 1) + Math.sin(x * Math.pi / 2)) / 2;
+  	return (Math.sin(x + 1) + Math.sin(x * Math.PI / 2)) / 2;
   }
-  return (Math.sin(x / 2) + Math.sin(x * Math.pi / 4) * baseNP(x / 2) + baseNP(x / 4)) / 3;
+  return (Math.sin(x / 2) + Math.sin(x * Math.PI / 4) * baseNP(x / 2) + baseNP(x / 4)) / 3;
 }
 
 function createTurbulentLine(p1, p2) {
@@ -62,10 +62,9 @@ function createTurbulentLine(p1, p2) {
   const line = new Path2D();
   const [x0, y0] = [p1.x,p1.y];
   const [x1, y1] = [p2.x,p2.y];
-  const tempv = {x: x0-x1,y: y0-y1};
-  const v = normalizeVec(tempv);
+  const v = normalizeVec({x: x0-x1,y: y0-y1});
   const [vx, vy] = [v.x,v.y];
-  const perp = {x: vy,y: -vx};
+  const perp = {x: v.y,y: -v.x};
   
   line.moveTo(x0, y0);
   
@@ -73,7 +72,8 @@ function createTurbulentLine(p1, p2) {
   	const t = i / POINT_COUNT;
     const p = addVec(multiplyVec(t, p2),multiplyVec(1 - t, p1));
     const noise = 3.0 * noiseFunct(t * 400 * (RES**2) + seed) + 1.0 * noiseFunct(t * 400 * (RES**2) * 4);
-    const [ppx, ppy] = addVec(p, multiplyVec(noise, perp));
+    const temppx = addVec(p, multiplyVec(noise, perp));
+    const [ppx, ppy] = [temppx.x,temppx.y];
     line.lineTo(ppx, ppy);
   }
   return line;  
@@ -86,9 +86,9 @@ function* animation(g, bg) {
   bg.imageSmoothingEnabled = false;
   while (true) {
   	const size = getRandomInt(2, 7) * RES;
-    const angle = getRandomArbitrary(0.0, Math.pi * 2);
+    const angle = getRandomArbitrary(0.0, Math.PI * 2);
     const dir = {x: Math.cos(angle), y: Math.sin(angle)};
-    const perp = {x: dir.x, y: -dir.y};
+    const perp = {x: dir.y, y: -dir.x};
     const pos = {
     	x: getRandomArbitrary(0, g.canvas.width),
       y: getRandomArbitrary(0, g.canvas.height)
@@ -109,8 +109,8 @@ function* animation(g, bg) {
     
     
     leftClip.lineTo(xl1, yl1);
-	leftClip.lineTo(xl0, yl0);
-	leftClip.closePath();
+		leftClip.lineTo(xl0, yl0);
+		leftClip.closePath();
     
     
     const rightClip = new Path2D(path);
