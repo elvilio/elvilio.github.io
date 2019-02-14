@@ -15,14 +15,14 @@ const realBuffer = $buffer.getContext('2d');
 beginAnimationLoop();
 
 function beginAnimationLoop() {
-	var anim = animation(realCanvas, realBuffer);
+  var anim = animation(realCanvas, realBuffer);
   setInterval(() => {
         anim.next();
     }, 1000 / 60);
 }
 
 function distanceVec(p1, p2) {
-	return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+  return Math.hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
 function getRandomInt(min, max) {
@@ -36,29 +36,29 @@ function getRandomArbitrary(min, max) {
 }
 
 function addVec(p1, p2) {
-	return {x: p1.x+p2.x,y: p1.y+p2.y};
+  return {x: p1.x+p2.x,y: p1.y+p2.y};
 }
 
 function multiplyVec(t, p) {
-	return {x: t*p.x,y: t*p.y};
+  return {x: t*p.x,y: t*p.y};
 }
 
 function normalizeVec(v) {
-	const norm = Math.hypot(v.x,v.y);
+  const norm = Math.hypot(v.x,v.y);
   return {x: v.x/norm, y: v.y/norm};
 }
 
 function noiseFunct(x) {
-	function baseNP(x) {
-  	return (Math.sin(x + 1) + Math.sin(x * Math.PI / 2)) / 2;
+  function baseNP(x) {
+    return (Math.sin(x + 1) + Math.sin(x * Math.PI / 2)) / 2;
   }
   return (Math.sin(x / 2) + Math.sin(x * Math.PI / 4) * baseNP(x / 2) + baseNP(x / 4)) / 3;
 }
 
 function createTurbulentLine(p1, p2) {
-	const POINT_DENSITY = 0.5;
+  const POINT_DENSITY = 0.5;
   const POINT_COUNT = distanceVec(p1, p2) / POINT_DENSITY;
-	const seed = Math.random(0, 1e5);
+  const seed = Math.random(0, 1e5);
   const line = new Path2D();
   const [x0, y0] = [p1.x,p1.y];
   const [x1, y1] = [p2.x,p2.y];
@@ -69,7 +69,7 @@ function createTurbulentLine(p1, p2) {
   line.moveTo(x0, y0);
   
   for (let i = 0; i <= POINT_COUNT; i++) {
-  	const t = i / POINT_COUNT;
+    const t = i / POINT_COUNT;
     const p = addVec(multiplyVec(t, p2),multiplyVec(1 - t, p1));
     const noise = 3.0 * noiseFunct(t * 400 * (RES**2) + seed) + 1.0 * noiseFunct(t * 400 * (RES**2) * 4);
     const temppx = addVec(p, multiplyVec(noise, perp));
@@ -80,17 +80,17 @@ function createTurbulentLine(p1, p2) {
 }
 
 function* animation(g, bg) {
-	g.fillStyle = 'black';
+  g.fillStyle = 'black';
   g.fillRect(0, 0, g.canvas.width, g.canvas.height);
   g.imageSmoothingEnabled = false;
   bg.imageSmoothingEnabled = false;
   while (true) {
-  	const size = getRandomInt(2, 7) * RES;
+    const size = getRandomInt(2, 7) * RES;
     const angle = getRandomArbitrary(0.0, Math.PI * 2);
     const dir = {x: Math.cos(angle), y: Math.sin(angle)};
     const perp = {x: dir.y, y: -dir.x};
     const pos = {
-    	x: getRandomArbitrary(0, g.canvas.width),
+      x: getRandomArbitrary(0, g.canvas.width),
       y: getRandomArbitrary(0, g.canvas.height)
     };
     const up_ = multiplyVec(+1.5 * g.canvas.width, dir);
@@ -109,8 +109,8 @@ function* animation(g, bg) {
     
     
     leftClip.lineTo(xl1, yl1);
-		leftClip.lineTo(xl0, yl0);
-		leftClip.closePath();
+    leftClip.lineTo(xl0, yl0);
+    leftClip.closePath();
     
     
     const rightClip = new Path2D(path);
@@ -131,7 +131,7 @@ function* animation(g, bg) {
     g.stroke(path);
     yield;
     for (let i = 0; i < size; i++) {
-    	bg.save();
+      bg.save();
       bg.drawImage(g.canvas, perp.x, perp.y);
       bg.clip(rightClip);
       bg.drawImage(g.canvas, -perp.x, -perp.y);
@@ -143,5 +143,5 @@ function* animation(g, bg) {
       yield;
     }
     yield;
-	}
+  }
 }
